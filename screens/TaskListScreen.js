@@ -49,6 +49,14 @@ export const TaskListScreen = ({ navigation }) => {
             {formatStatus(item.status)}
           </Text>
         </View>
+        <View style={styles.rightActions}>
+          <TouchableOpacity
+            style={[styles.actionButton, { backgroundColor: COLORS.danger }]}
+            onPress={() => deleteTask(item.id)}
+          >
+            <Text style={styles.actionText}>Delete</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -157,6 +165,20 @@ const styles = StyleSheet.create({
   },
   statusText: {
     fontSize: 12,
+    fontWeight: '600',
+  },
+  rightActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  actionButton: {
+    padding: 10,
+    borderRadius: 8,
+    marginLeft: 8,
+  },
+  actionText: {
+    color: COLORS.white,
     fontWeight: '600',
   },
 }); 

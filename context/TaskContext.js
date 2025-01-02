@@ -60,20 +60,10 @@ export const TaskProvider = ({ children }) => {
     await saveTasks(updatedTasks);
   };
 
-  // Update task
-  const updateTask = async (updatedTask) => {
-    const updatedTasks = tasks.map(task => 
-      task.id === updatedTask.id ? updatedTask : task
-    );
-    setTasks(updatedTasks);
-    await saveTasks(updatedTasks);
-  };
-
   return (
     <TaskContext.Provider value={{
       tasks,
       addTask,
-      updateTask,
       updateTaskStatus,
       deleteTask
     }}>
