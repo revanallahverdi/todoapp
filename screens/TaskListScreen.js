@@ -4,9 +4,8 @@ import {
   StyleSheet, 
   TouchableOpacity, 
   Text,
-  Dimensions 
+  FlatList
 } from 'react-native';
-import { SwipeListView } from 'react-native-swipe-list-view';
 import { TaskContext } from '../context/TaskContext';
 import { COLORS, SHADOWS } from '../constants/theme';
 
@@ -31,12 +30,11 @@ export const TaskListScreen = ({ navigation }) => {
   });
 
   const renderItem = ({ item }) => (
-    <View style={styles.rowFront}>
-      <TouchableOpacity 
-        style={styles.taskItem}
-        onPress={() => navigation.navigate('TaskDetail', { taskId: item.id })}
-        activeOpacity={1}
-      >
+    <TouchableOpacity 
+      style={styles.taskCard}
+      onPress={() => navigation.navigate('TaskDetail', { taskId: item.id })}
+    >
+      <View style={styles.taskContent}>
         <View>
           <Text style={styles.taskTitle}>{item.title}</Text>
           <Text style={styles.taskDate}>
@@ -51,47 +49,8 @@ export const TaskListScreen = ({ navigation }) => {
             {formatStatus(item.status)}
           </Text>
         </View>
-      </TouchableOpacity>
-    </View>
-  );
-
-  const renderHiddenItem = ({ item }) => (
-    <View style={styles.rowBack}>
-      <View style={styles.statusActions}>
-        <TouchableOpacity
-          style={[styles.actionButton, { backgroundColor: COLORS.success }]}
-          onPress={() => updateTaskStatus(item.id, 'completed')}
-        >
-          <Text style={styles.actionText}>Complete</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.actionButton, { backgroundColor: COLORS.warning }]}
-          onPress={() => updateTaskStatus(item.id, 'in_progress')}
-        >
-          <Text style={styles.actionText}>Progress</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.actionButton, { backgroundColor: COLORS.danger }]}
-          onPress={() => updateTaskStatus(item.id, 'cancelled')}
-        >
-          <Text style={styles.actionText}>Cancel</Text>
-        </TouchableOpacity>
       </View>
-      <View style={styles.rightActions}>
-        <TouchableOpacity
-          style={[styles.actionButton, { backgroundColor: COLORS.primaryLight }]}
-          onPress={() => navigation.navigate('EditTask', { task: item })}
-        >
-          <Text style={styles.actionText}>Edit</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.actionButton, styles.deleteButton]}
-          onPress={() => deleteTask(item.id)}
-        >
-          <Text style={styles.actionText}>Delete</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -111,20 +70,11 @@ export const TaskListScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <SwipeListView
+      <FlatList
         data={sortedTasks}
         renderItem={renderItem}
-        renderHiddenItem={renderHiddenItem}
-        rightOpenValue={-150}
-        leftOpenValue={220}
-        previewRowKey={'0'}
-        previewOpenValue={-40}
-        previewOpenDelay={3000}
         keyExtractor={item => item.id}
         style={styles.list}
-        swipeToOpenPercent={30}
-        disableRightSwipe={false}
-        disableLeftSwipe={false}
       />
     </View>
   );
@@ -178,21 +128,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 8,
   },
-  rowFront: {
+  taskCard: {
     backgroundColor: COLORS.white,
     borderRadius: 12,
     marginVertical: 6,
-    height: 80,
+    padding: 16,
     ...SHADOWS.small,
   },
-  taskItem: {
-    flex: 1,
+  taskContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
-    backgroundColor: COLORS.white,
-    borderRadius: 12,
   },
   taskTitle: {
     fontSize: 16,
@@ -212,44 +158,5 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: 12,
     fontWeight: '600',
-  },
-  rowBack: {
-    alignItems: 'center',
-    backgroundColor: COLORS.background,
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    marginVertical: 6,
-    height: 80,
-  },
-  statusActions: {
-    flexDirection: 'row',
-    gap: 8,
-    height: '100%',
-  },
-  actionButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 68,
-    height: '100%',
-    borderRadius: 12,
-    ...SHADOWS.small,
-  },
-  deleteButton: {
-    backgroundColor: COLORS.danger,
-    width: 68,
-    height: '100%',
-    borderRadius: 12,
-  },
-  actionText: {
-    color: COLORS.white,
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  rightActions: {
-    flexDirection: 'row',
-    gap: 8,
-    height: '100%',
   },
 }); 

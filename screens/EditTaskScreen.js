@@ -6,7 +6,8 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  Alert
+  Alert,
+  Platform
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { TaskContext } from '../context/TaskContext';
@@ -21,6 +22,7 @@ export const EditTaskScreen = ({ route, navigation }) => {
   const [location, setLocation] = useState(task.location);
   const [executionDate, setExecutionDate] = useState(new Date(task.executionDate));
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
 
   const handleSubmit = async () => {
     if (!title.trim()) {
@@ -38,6 +40,29 @@ export const EditTaskScreen = ({ route, navigation }) => {
 
     await updateTask(updatedTask);
     navigation.goBack();
+  };
+
+  const onDateChange = (event, selectedDate) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      const currentDate = new Date(selectedDate);
+      currentDate.setHours(executionDate.getHours());
+      currentDate.setMinutes(executionDate.getMinutes());
+      setExecutionDate(currentDate);
+      if (Platform.OS === 'android') {
+        setShowTimePicker(true);
+      }
+    }
+  };
+
+  const onTimeChange = (event, selectedTime) => {
+    setShowTimePicker(false);
+    if (selectedTime) {
+      const currentDate = new Date(executionDate);
+      currentDate.setHours(selectedTime.getHours());
+      currentDate.setMinutes(selectedTime.getMinutes());
+      setExecutionDate(currentDate);
+    }
   };
 
   return (
@@ -70,16 +95,33 @@ export const EditTaskScreen = ({ route, navigation }) => {
           style={styles.dateButton}
           onPress={() => setShowDatePicker(true)}
         >
-          <Text>Select Date: {executionDate.toLocaleDateString()}</Text>
+          <Text>Select Date and Time: {executionDate.toLocaleString()}</Text>
         </TouchableOpacity>
 
-        {showDatePicker && (
+        {showDatePicker && Platform.OS === 'android' && (
+          <DateTimePicker
+            value={executionDate}
+            mode="date"
+            display="default"
+            onChange={onDateChange}
+          />
+        )}
+
+        {showTimePicker && Platform.OS === 'android' && (
+          <DateTimePicker
+            value={executionDate}
+            mode="time"
+            display="default"
+            onChange={onTimeChange}
+          />
+        )}
+
+        {showDatePicker && Platform.OS === 'ios' && (
           <DateTimePicker
             value={executionDate}
             mode="datetime"
-            display="default"
+            display="spinner"
             onChange={(event, selectedDate) => {
-              setShowDatePicker(false);
               if (selectedDate) {
                 setExecutionDate(selectedDate);
               }
