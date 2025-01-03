@@ -49,14 +49,6 @@ export const TaskListScreen = ({ navigation }) => {
             {formatStatus(item.status)}
           </Text>
         </View>
-        <View style={styles.rightActions}>
-          <TouchableOpacity
-            style={[styles.actionButton, { backgroundColor: COLORS.danger }]}
-            onPress={() => deleteTask(item.id)}
-          >
-            <Text style={styles.actionText}>Delete</Text>
-          </TouchableOpacity>
-        </View>
       </View>
     </TouchableOpacity>
   );
